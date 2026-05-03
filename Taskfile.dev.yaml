@@ -1,0 +1,5 @@
+version: "3"
+
+tasks:
+    scraper:
+        - uv run python main.py

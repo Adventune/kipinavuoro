@@ -1,0 +1,39 @@
+name: Update posts.json
+
+on:
+    workflow_dispatch:
+
+permissions:
+    contents: write
+
+jobs:
+    scrape-and-commit:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v5
+              with:
+                  fetch-depth: 0
+                  persist-credentials: true
+
+            - name: Set up Python
+              uses: actions/setup-python@v6
+              with:
+                  python-version: "3.12"
+
+            - name: Set up uv
+              uses: astral-sh/setup-uv@v6
+              with:
+                  enable-cache: true
+
+            - name: Install dependencies
+              run: uv sync --frozen
+
+            - name: Run scraper
+              run: uv run python main.py
+
+            - name: Commit posts.json if changed
+              uses: stefanzweifel/git-auto-commit-action@v7
+              with:
+                  commit_message: "chore: update posts.json"
+                  file_pattern: "posts.json"
